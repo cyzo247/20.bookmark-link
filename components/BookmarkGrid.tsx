@@ -4,7 +4,7 @@ import BookmarkCard from "@/components/BookmarkCard";
 export default function BookmarkGrid({ bookmarks }: { bookmarks: Bookmark[] }) {
   if (bookmarks.length === 0) {
     return (
-      <p className="py-16 text-center text-sm text-zinc-500 dark:text-zinc-400">
+      <p className="py-20 text-center text-sm text-[var(--text-sub)]">
         등록된 링크가 없습니다.
       </p>
     );

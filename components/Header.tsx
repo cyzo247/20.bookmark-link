@@ -2,17 +2,17 @@ import Link from "next/link";
 
 export default function Header() {
   return (
-    <header className="flex h-16 shrink-0 items-center justify-between border-b border-black/[.08] px-6 dark:border-white/[.145]">
+    <header className="app-header flex h-14 shrink-0 items-center justify-between px-5">
       <Link
         href="/"
-        className="text-lg font-semibold tracking-tight text-foreground"
+        className="text-[20px] font-bold tracking-tight text-[var(--text)]"
       >
         Bookmark Link
       </Link>
 
       <Link
         href="/new"
-        className="flex h-9 items-center gap-1.5 rounded-full bg-foreground px-4 text-sm font-medium text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc]"
+        className="btn-primary flex h-9 items-center gap-1.5 rounded-xl px-4 text-sm font-semibold"
       >
         <svg
           width="14"

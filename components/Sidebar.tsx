@@ -10,17 +10,15 @@ export default function Sidebar({ folders }: { folders: Folder[] }) {
   const isAllActive = pathname === "/";
 
   return (
-    <aside className="flex w-56 shrink-0 flex-col gap-4 border-r border-black/[.08] p-4 dark:border-white/[.145]">
+    <aside className="flex w-56 shrink-0 flex-col gap-4 p-4">
       <Link
         href="/"
-        className={`flex items-center justify-between rounded-md px-3 py-2 text-left text-sm font-medium transition-colors ${
-          isAllActive
-            ? "bg-black/[.06] text-foreground dark:bg-white/[.08]"
-            : "text-zinc-600 hover:bg-black/[.04] dark:text-zinc-400 dark:hover:bg-white/[.08]"
+        className={`nav-link flex items-center justify-between rounded-xl px-3 py-2.5 text-left text-sm font-medium ${
+          isAllActive ? "nav-link-active" : ""
         }`}
       >
         All
-        <span className="text-xs text-zinc-400 dark:text-zinc-500">
+        <span className="text-xs text-[var(--text-sub)]">
           {folders.reduce((total, folder) => total + folder.count, 0)}
         </span>
       </Link>
