@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import Header from "@/components/Header";
 import Sidebar from "@/components/Sidebar";
 import FolderProvider from "@/components/FolderProvider";
-import { folders } from "@/app/_lib/mock-data";
+import BookmarkProvider from "@/components/BookmarkProvider";
+import { folders, bookmarks } from "@/app/_lib/mock-data";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -15,11 +16,13 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     <html lang="ko" className="h-full antialiased">
       <body className="flex min-h-full flex-col">
         <FolderProvider initialFolders={folders}>
-          <Header />
-          <div className="flex flex-1">
-            <Sidebar />
-            <main className="flex-1 px-8 pt-9 pb-8">{children}</main>
-          </div>
+          <BookmarkProvider initialBookmarks={bookmarks}>
+            <Header />
+            <div className="flex flex-1">
+              <Sidebar />
+              <main className="flex-1 px-8 pt-9 pb-8">{children}</main>
+            </div>
+          </BookmarkProvider>
         </FolderProvider>
       </body>
     </html>

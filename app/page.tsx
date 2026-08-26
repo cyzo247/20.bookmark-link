@@ -1,6 +1,5 @@
-import BookmarkGrid from "@/components/BookmarkGrid";
-import { bookmarks } from "@/app/_lib/mock-data";
+import AllBookmarks from "@/components/AllBookmarks";
 
 export default function Home() {
-  return <BookmarkGrid bookmarks={bookmarks} />;
+  return <AllBookmarks />;
 }

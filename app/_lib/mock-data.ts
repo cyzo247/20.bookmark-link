@@ -10,6 +10,7 @@ export type Bookmark = {
   url: string;
   description: string;
   folderId: string;
+  thumbnail?: string;
 };
 
 export const folders: Folder[] = [

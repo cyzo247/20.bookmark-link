@@ -8,6 +8,7 @@ type FolderContextValue = {
   addFolder: (name: string) => void;
   renameFolder: (id: string, name: string) => void;
   removeFolder: (id: string) => void;
+  updateFolderCount: (id: string, delta: number) => void;
 };
 
 const FolderContext = createContext<FolderContextValue | null>(null);
@@ -46,9 +47,23 @@ export default function FolderProvider({
     setFolders((current) => current.filter((folder) => folder.id !== id));
   }
 
+  function updateFolderCount(id: string, delta: number) {
+    setFolders((current) =>
+      current.map((folder) =>
+        folder.id === id ? { ...folder, count: folder.count + delta } : folder,
+      ),
+    );
+  }
+
   return (
     <FolderContext.Provider
-      value={{ folders, addFolder, renameFolder, removeFolder }}
+      value={{
+        folders,
+        addFolder,
+        renameFolder,
+        removeFolder,
+        updateFolderCount,
+      }}
     >
       {children}
     </FolderContext.Provider>

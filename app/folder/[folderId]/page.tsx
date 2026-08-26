@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
-import BookmarkGrid from "@/components/BookmarkGrid";
-import { bookmarks, folders } from "@/app/_lib/mock-data";
+import FolderBookmarks from "@/components/FolderBookmarks";
+import { folders } from "@/app/_lib/mock-data";
 
 export default async function FolderPage({
   params,
@@ -12,16 +12,12 @@ export default async function FolderPage({
     notFound();
   }
 
-  const folderBookmarks = bookmarks.filter(
-    (bookmark) => bookmark.folderId === folderId,
-  );
-
   return (
     <div className="flex flex-col gap-6">
       <h1 className="text-[26px] font-bold text-[var(--text)]">
         {folder.name}
       </h1>
-      <BookmarkGrid bookmarks={folderBookmarks} />
+      <FolderBookmarks folderId={folderId} />
     </div>
   );
 }
