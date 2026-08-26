@@ -2,19 +2,25 @@
 
 import { useState } from "react";
 import type { Bookmark } from "@/app/_lib/mock-data";
-import DeleteBookmarkModal from "@/components/DeleteBookmarkModal";
+import EditBookmarkModal from "@/components/EditBookmarkModal";
 import { useBookmarks } from "@/components/BookmarkProvider";
 
-export default function BookmarkDeleteButton({
+type BookmarkUpdateInput = {
+  folderId: string;
+  title: string;
+  description: string;
+};
+
+export default function BookmarkEditButton({
   bookmark,
 }: {
   bookmark: Bookmark;
 }) {
   const [isOpen, setIsOpen] = useState(false);
-  const { removeBookmark } = useBookmarks();
+  const { updateBookmark } = useBookmarks();
 
-  function handleConfirm() {
-    removeBookmark(bookmark.id);
+  function handleSave(updates: BookmarkUpdateInput) {
+    updateBookmark(bookmark.id, updates);
     setIsOpen(false);
   }
 
@@ -22,9 +28,9 @@ export default function BookmarkDeleteButton({
     <>
       <button
         type="button"
-        aria-label={`${bookmark.title} 링크 삭제`}
+        aria-label={`${bookmark.title} 링크 수정`}
         onClick={() => setIsOpen(true)}
-        className="bookmark-action-btn bookmark-delete-btn flex h-8 w-8 items-center justify-center rounded-full"
+        className="bookmark-action-btn flex h-8 w-8 items-center justify-center rounded-full"
       >
         <svg
           width="14"
@@ -34,7 +40,7 @@ export default function BookmarkDeleteButton({
           aria-hidden="true"
         >
           <path
-            d="M2.5 3.5h9M5.5 3.5V2a1 1 0 0 1 1-1h1a1 1 0 0 1 1 1v1.5M4 3.5l.5 8a1 1 0 0 0 1 .9h3a1 1 0 0 0 1-.9l.5-8"
+            d="M9.5 1.5 12.5 4.5 4.5 12.5H1.5v-3L9.5 1.5Z"
             stroke="currentColor"
             strokeWidth="1.2"
             strokeLinecap="round"
@@ -44,10 +50,10 @@ export default function BookmarkDeleteButton({
       </button>
 
       {isOpen && (
-        <DeleteBookmarkModal
-          bookmarkTitle={bookmark.title}
+        <EditBookmarkModal
+          bookmark={bookmark}
           onClose={() => setIsOpen(false)}
-          onConfirm={handleConfirm}
+          onSave={handleSave}
         />
       )}
     </>

@@ -1,4 +1,5 @@
 import type { Bookmark } from "@/app/_lib/mock-data";
+import BookmarkEditButton from "@/components/BookmarkEditButton";
 import BookmarkDeleteButton from "@/components/BookmarkDeleteButton";
 
 function getHostname(url: string) {
@@ -50,7 +51,10 @@ export default function BookmarkCard({ bookmark }: { bookmark: Bookmark }) {
         </div>
       </a>
 
-      <BookmarkDeleteButton bookmark={bookmark} />
+      <div className="bookmark-actions absolute top-3 right-3 z-10 flex items-center gap-1.5">
+        <BookmarkEditButton bookmark={bookmark} />
+        <BookmarkDeleteButton bookmark={bookmark} />
+      </div>
     </div>
   );
 }

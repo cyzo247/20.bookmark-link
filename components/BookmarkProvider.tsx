@@ -6,9 +6,16 @@ import { useFolders } from "@/components/FolderProvider";
 
 type NewBookmarkInput = Omit<Bookmark, "id">;
 
+type BookmarkUpdateInput = {
+  folderId: string;
+  title: string;
+  description: string;
+};
+
 type BookmarkContextValue = {
   bookmarks: Bookmark[];
   addBookmark: (input: NewBookmarkInput) => void;
+  updateBookmark: (id: string, updates: BookmarkUpdateInput) => void;
   removeBookmark: (id: string) => void;
 };
 
@@ -32,6 +39,26 @@ export default function BookmarkProvider({
     updateFolderCount(input.folderId, 1);
   }
 
+  function updateBookmark(id: string, updates: BookmarkUpdateInput) {
+    const title = updates.title.trim();
+    if (!title) return;
+
+    const target = bookmarks.find((bookmark) => bookmark.id === id);
+
+    setBookmarks((current) =>
+      current.map((bookmark) =>
+        bookmark.id === id
+          ? { ...bookmark, ...updates, title, description: updates.description.trim() }
+          : bookmark,
+      ),
+    );
+
+    if (target && target.folderId !== updates.folderId) {
+      updateFolderCount(target.folderId, -1);
+      updateFolderCount(updates.folderId, 1);
+    }
+  }
+
   function removeBookmark(id: string) {
     const target = bookmarks.find((bookmark) => bookmark.id === id);
     setBookmarks((current) => current.filter((bookmark) => bookmark.id !== id));
@@ -42,7 +69,9 @@ export default function BookmarkProvider({
   }
 
   return (
-    <BookmarkContext.Provider value={{ bookmarks, addBookmark, removeBookmark }}>
+    <BookmarkContext.Provider
+      value={{ bookmarks, addBookmark, updateBookmark, removeBookmark }}
+    >
       {children}
     </BookmarkContext.Provider>
   );
