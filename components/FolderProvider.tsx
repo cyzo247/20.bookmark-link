@@ -6,6 +6,7 @@ import type { Folder } from "@/app/_lib/mock-data";
 type FolderContextValue = {
   folders: Folder[];
   addFolder: (name: string) => void;
+  removeFolder: (id: string) => void;
 };
 
 const FolderContext = createContext<FolderContextValue | null>(null);
@@ -29,8 +30,12 @@ export default function FolderProvider({
     ]);
   }
 
+  function removeFolder(id: string) {
+    setFolders((current) => current.filter((folder) => folder.id !== id));
+  }
+
   return (
-    <FolderContext.Provider value={{ folders, addFolder }}>
+    <FolderContext.Provider value={{ folders, addFolder, removeFolder }}>
       {children}
     </FolderContext.Provider>
   );

@@ -42,6 +42,26 @@ body {
   color: var(--accent);
 }
 
+/* Folder row hover reveal (count <-> delete button) */
+.folder-count {
+  transition: opacity 0.2s ease;
+}
+.folder-delete-btn {
+  color: var(--text-sub);
+  opacity: 0;
+  transition: opacity 0.2s ease, background-color 0.2s ease, color 0.2s ease;
+}
+.group:hover .folder-count {
+  opacity: 0;
+}
+.group:hover .folder-delete-btn {
+  opacity: 1;
+}
+.folder-delete-btn:hover {
+  background: var(--surface-hover);
+  color: var(--error);
+}
+
 /* Cards */
 .card {
   background: var(--surface);
@@ -81,6 +101,18 @@ body {
   background: var(--accent-soft-hover);
 }
 .btn-secondary:active {
+  transform: scale(0.98);
+}
+
+.btn-danger {
+  background: var(--error);
+  color: #ffffff;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+}
+.btn-danger:hover {
+  background: #d93a48;
+}
+.btn-danger:active {
   transform: scale(0.98);
 }
 
