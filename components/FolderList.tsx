@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { Folder } from "@/app/_lib/mock-data";
+import FolderEditButton from "@/components/FolderEditButton";
 import FolderDeleteButton from "@/components/FolderDeleteButton";
 
 export default function FolderList({ folders }: { folders: Folder[] }) {
@@ -18,7 +19,7 @@ export default function FolderList({ folders }: { folders: Folder[] }) {
           <li key={folder.id} className="group relative">
             <Link
               href={href}
-              className={`nav-link flex w-full items-center justify-between rounded-xl px-3 py-2.5 pr-9 text-left text-sm ${
+              className={`nav-link flex w-full items-center justify-between rounded-xl px-3 py-2.5 pr-16 text-left text-sm ${
                 isActive ? "nav-link-active font-medium" : ""
               }`}
             >
@@ -43,7 +44,10 @@ export default function FolderList({ folders }: { folders: Folder[] }) {
                 {folder.count}
               </span>
             </Link>
-            <FolderDeleteButton folder={folder} />
+            <div className="folder-actions absolute inset-y-0 right-2 flex items-center gap-0.5">
+              <FolderEditButton folder={folder} />
+              <FolderDeleteButton folder={folder} />
+            </div>
           </li>
         );
       })}
