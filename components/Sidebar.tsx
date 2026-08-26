@@ -2,11 +2,12 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import type { Folder } from "@/app/_lib/mock-data";
 import FolderList from "@/components/FolderList";
+import { useFolders } from "@/components/FolderProvider";
 
-export default function Sidebar({ folders }: { folders: Folder[] }) {
+export default function Sidebar() {
   const pathname = usePathname();
+  const { folders } = useFolders();
   const isAllActive = pathname === "/";
 
   return (
