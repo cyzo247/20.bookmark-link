@@ -2,10 +2,11 @@
 
 import { createContext, useContext, useState, type ReactNode } from "react";
 import type { Folder } from "@/app/_lib/mock-data";
+import { createClient } from "@/utils/supabase/client";
 
 type FolderContextValue = {
   folders: Folder[];
-  addFolder: (name: string) => void;
+  addFolder: (name: string) => Promise<void>;
   renameFolder: (id: string, name: string) => void;
   removeFolder: (id: string) => void;
   updateFolderCount: (id: string, delta: number) => void;
@@ -22,13 +23,24 @@ export default function FolderProvider({
 }) {
   const [folders, setFolders] = useState<Folder[]>(initialFolders);
 
-  function addFolder(name: string) {
+  async function addFolder(name: string) {
     const trimmed = name.trim();
     if (!trimmed) return;
 
+    const supabase = createClient();
+    const { data, error } = await supabase
+      .from("folders")
+      .insert({ name: trimmed })
+      .select("id, name")
+      .single();
+
+    if (error || !data) {
+      throw new Error(error?.message ?? "폴더를 추가하지 못했습니다.");
+    }
+
     setFolders((current) => [
       ...current,
-      { id: crypto.randomUUID(), name: trimmed, count: 0 },
+      { id: String(data.id), name: data.name, count: 0 },
     ]);
   }
 

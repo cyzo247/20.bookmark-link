@@ -3,7 +3,8 @@ import Header from "@/components/Header";
 import Sidebar from "@/components/Sidebar";
 import FolderProvider from "@/components/FolderProvider";
 import BookmarkProvider from "@/components/BookmarkProvider";
-import { folders, bookmarks } from "@/app/_lib/mock-data";
+import { bookmarks } from "@/app/_lib/mock-data";
+import { getFolders } from "@/app/_lib/folders";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -11,7 +12,9 @@ export const metadata: Metadata = {
   description: "북마크 링크 관리 서비스",
 };
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default async function RootLayout({ children }: LayoutProps<"/">) {
+  const folders = await getFolders();
+
   return (
     <html lang="ko" className="h-full antialiased">
       <body className="flex min-h-full flex-col">
