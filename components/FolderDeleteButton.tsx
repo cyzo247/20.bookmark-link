@@ -8,16 +8,29 @@ import { useFolders } from "@/components/FolderProvider";
 
 export default function FolderDeleteButton({ folder }: { folder: Folder }) {
   const [isOpen, setIsOpen] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
   const { removeFolder } = useFolders();
   const router = useRouter();
   const pathname = usePathname();
 
-  function handleConfirm() {
-    removeFolder(folder.id);
-    setIsOpen(false);
+  async function handleConfirm() {
+    // 삭제가 진행 중이면 중복 클릭을 무시한다.
+    if (isDeleting) return;
 
-    if (pathname === `/folder/${folder.id}`) {
-      router.push("/");
+    setIsDeleting(true);
+    try {
+      await removeFolder(folder.id);
+      setIsOpen(false);
+
+      if (pathname === `/folder/${folder.id}`) {
+        router.push("/");
+      }
+    } catch (error) {
+      alert(
+        error instanceof Error ? error.message : "폴더를 삭제하지 못했습니다.",
+      );
+    } finally {
+      setIsDeleting(false);
     }
   }
 
@@ -49,7 +62,10 @@ export default function FolderDeleteButton({ folder }: { folder: Folder }) {
       {isOpen && (
         <DeleteFolderModal
           folderName={folder.name}
-          onClose={() => setIsOpen(false)}
+          isDeleting={isDeleting}
+          onClose={() => {
+            if (!isDeleting) setIsOpen(false);
+          }}
           onConfirm={handleConfirm}
         />
       )}
