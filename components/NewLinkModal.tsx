@@ -31,7 +31,7 @@ export default function NewLinkModal({ onClose }: { onClose: () => void }) {
 
       const og: OgResult = await response.json();
 
-      addBookmark({
+      await addBookmark({
         title: og.title,
         url: og.url,
         description: og.description,
@@ -41,7 +41,7 @@ export default function NewLinkModal({ onClose }: { onClose: () => void }) {
 
       onClose();
     } catch {
-      setError("링크 정보를 가져오지 못했습니다. 주소를 다시 확인해 주세요.");
+      setError("링크를 추가하지 못했습니다. 주소를 다시 확인해 주세요.");
       setIsSubmitting(false);
     }
   }

@@ -3,8 +3,8 @@ import Header from "@/components/Header";
 import Sidebar from "@/components/Sidebar";
 import FolderProvider from "@/components/FolderProvider";
 import BookmarkProvider from "@/components/BookmarkProvider";
-import { bookmarks } from "@/app/_lib/mock-data";
 import { getFolders } from "@/app/_lib/folders";
+import { getLinks } from "@/app/_lib/links";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -13,7 +13,12 @@ export const metadata: Metadata = {
 };
 
 export default async function RootLayout({ children }: LayoutProps<"/">) {
-  const folders = await getFolders();
+  const [folderList, bookmarks] = await Promise.all([getFolders(), getLinks()]);
+  // 사이드바 폴더 카운트를 불러온 링크 기준으로 채운다.
+  const folders = folderList.map((folder) => ({
+    ...folder,
+    count: bookmarks.filter((bookmark) => bookmark.folderId === folder.id).length,
+  }));
 
   return (
     <html lang="ko" className="h-full antialiased">

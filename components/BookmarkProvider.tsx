@@ -3,6 +3,7 @@
 import { createContext, useContext, useState, type ReactNode } from "react";
 import type { Bookmark } from "@/app/_lib/mock-data";
 import { useFolders } from "@/components/FolderProvider";
+import { createClient } from "@/utils/supabase/client";
 
 type NewBookmarkInput = Omit<Bookmark, "id">;
 
@@ -14,7 +15,7 @@ type BookmarkUpdateInput = {
 
 type BookmarkContextValue = {
   bookmarks: Bookmark[];
-  addBookmark: (input: NewBookmarkInput) => void;
+  addBookmark: (input: NewBookmarkInput) => Promise<void>;
   updateBookmark: (id: string, updates: BookmarkUpdateInput) => void;
   removeBookmark: (id: string) => void;
 };
@@ -31,12 +32,35 @@ export default function BookmarkProvider({
   const [bookmarks, setBookmarks] = useState<Bookmark[]>(initialBookmarks);
   const { updateFolderCount } = useFolders();
 
-  function addBookmark(input: NewBookmarkInput) {
-    setBookmarks((current) => [
-      { id: crypto.randomUUID(), ...input },
-      ...current,
-    ]);
-    updateFolderCount(input.folderId, 1);
+  async function addBookmark(input: NewBookmarkInput) {
+    const supabase = createClient();
+    const { data, error } = await supabase
+      .from("links")
+      .insert({
+        url: input.url,
+        title: input.title,
+        description: input.description,
+        thumbnail_url: input.thumbnail ?? null,
+        folder_id: input.folderId ? Number(input.folderId) : null,
+      })
+      .select("id, url, title, description, thumbnail_url, folder_id")
+      .single();
+
+    if (error || !data) {
+      throw new Error(error?.message ?? "링크를 추가하지 못했습니다.");
+    }
+
+    const newBookmark: Bookmark = {
+      id: String(data.id),
+      url: data.url,
+      title: data.title ?? "",
+      description: data.description ?? "",
+      folderId: data.folder_id != null ? String(data.folder_id) : "",
+      thumbnail: data.thumbnail_url ?? undefined,
+    };
+
+    setBookmarks((current) => [newBookmark, ...current]);
+    updateFolderCount(newBookmark.folderId, 1);
   }
 
   function updateBookmark(id: string, updates: BookmarkUpdateInput) {
