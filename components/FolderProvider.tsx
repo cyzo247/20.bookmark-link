@@ -7,7 +7,7 @@ import { createClient } from "@/utils/supabase/client";
 type FolderContextValue = {
   folders: Folder[];
   addFolder: (name: string) => Promise<void>;
-  renameFolder: (id: string, name: string) => void;
+  renameFolder: (id: string, name: string) => Promise<void>;
   removeFolder: (id: string) => void;
   updateFolderCount: (id: string, delta: number) => void;
 };
@@ -44,13 +44,25 @@ export default function FolderProvider({
     ]);
   }
 
-  function renameFolder(id: string, name: string) {
+  async function renameFolder(id: string, name: string) {
     const trimmed = name.trim();
     if (!trimmed) return;
 
+    const supabase = createClient();
+    const { data, error } = await supabase
+      .from("folders")
+      .update({ name: trimmed })
+      .eq("id", id)
+      .select("id, name")
+      .single();
+
+    if (error || !data) {
+      throw new Error(error?.message ?? "폴더 이름을 수정하지 못했습니다.");
+    }
+
     setFolders((current) =>
       current.map((folder) =>
-        folder.id === id ? { ...folder, name: trimmed } : folder,
+        folder.id === id ? { ...folder, name: data.name } : folder,
       ),
     );
   }

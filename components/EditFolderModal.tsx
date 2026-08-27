@@ -4,10 +4,12 @@ import { useState } from "react";
 
 export default function EditFolderModal({
   initialName,
+  isSaving = false,
   onClose,
   onSave,
 }: {
   initialName: string;
+  isSaving?: boolean;
   onClose: () => void;
   onSave: (name: string) => void;
 }) {
@@ -15,6 +17,8 @@ export default function EditFolderModal({
 
   function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    // 저장 중에는 추가 제출을 막는다.
+    if (isSaving) return;
     if (!name.trim()) return;
     onSave(name);
   }
@@ -52,15 +56,17 @@ export default function EditFolderModal({
           <button
             type="button"
             onClick={onClose}
-            className="btn-secondary flex h-12 flex-1 items-center justify-center rounded-xl text-[15px] font-bold"
+            disabled={isSaving}
+            className="btn-secondary flex h-12 flex-1 items-center justify-center rounded-xl text-[15px] font-bold disabled:opacity-50"
           >
             취소
           </button>
           <button
             type="submit"
-            className="btn-primary flex h-12 flex-1 items-center justify-center rounded-xl text-[15px] font-bold"
+            disabled={isSaving}
+            className="btn-primary flex h-12 flex-1 items-center justify-center rounded-xl text-[15px] font-bold disabled:opacity-50"
           >
-            저장
+            {isSaving ? "저장 중..." : "저장"}
           </button>
         </div>
       </form>
