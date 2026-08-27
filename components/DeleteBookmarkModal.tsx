@@ -2,10 +2,12 @@
 
 export default function DeleteBookmarkModal({
   bookmarkTitle,
+  isDeleting = false,
   onClose,
   onConfirm,
 }: {
   bookmarkTitle: string;
+  isDeleting?: boolean;
   onClose: () => void;
   onConfirm: () => void;
 }) {
@@ -26,16 +28,18 @@ export default function DeleteBookmarkModal({
           <button
             type="button"
             onClick={onClose}
-            className="btn-secondary flex h-12 flex-1 items-center justify-center rounded-xl text-[15px] font-bold"
+            disabled={isDeleting}
+            className="btn-secondary flex h-12 flex-1 items-center justify-center rounded-xl text-[15px] font-bold disabled:opacity-50"
           >
             취소
           </button>
           <button
             type="button"
             onClick={onConfirm}
-            className="btn-danger flex h-12 flex-1 items-center justify-center rounded-xl text-[15px] font-bold"
+            disabled={isDeleting}
+            className="btn-danger flex h-12 flex-1 items-center justify-center rounded-xl text-[15px] font-bold disabled:opacity-50"
           >
-            삭제
+            {isDeleting ? "삭제 중..." : "삭제"}
           </button>
         </div>
       </div>

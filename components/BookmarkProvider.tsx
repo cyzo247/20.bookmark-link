@@ -17,7 +17,7 @@ type BookmarkContextValue = {
   bookmarks: Bookmark[];
   addBookmark: (input: NewBookmarkInput) => Promise<void>;
   updateBookmark: (id: string, updates: BookmarkUpdateInput) => Promise<void>;
-  removeBookmark: (id: string) => void;
+  removeBookmark: (id: string) => Promise<void>;
 };
 
 const BookmarkContext = createContext<BookmarkContextValue | null>(null);
@@ -105,7 +105,14 @@ export default function BookmarkProvider({
     }
   }
 
-  function removeBookmark(id: string) {
+  async function removeBookmark(id: string) {
+    const supabase = createClient();
+    const { error } = await supabase.from("links").delete().eq("id", id);
+
+    if (error) {
+      throw new Error(error.message ?? "링크를 삭제하지 못했습니다.");
+    }
+
     const target = bookmarks.find((bookmark) => bookmark.id === id);
     setBookmarks((current) => current.filter((bookmark) => bookmark.id !== id));
 

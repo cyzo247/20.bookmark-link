@@ -11,11 +11,24 @@ export default function BookmarkDeleteButton({
   bookmark: Bookmark;
 }) {
   const [isOpen, setIsOpen] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
   const { removeBookmark } = useBookmarks();
 
-  function handleConfirm() {
-    removeBookmark(bookmark.id);
-    setIsOpen(false);
+  async function handleConfirm() {
+    // 삭제가 진행 중이면 중복 클릭을 무시한다.
+    if (isDeleting) return;
+
+    setIsDeleting(true);
+    try {
+      await removeBookmark(bookmark.id);
+      setIsOpen(false);
+    } catch (error) {
+      alert(
+        error instanceof Error ? error.message : "링크를 삭제하지 못했습니다.",
+      );
+    } finally {
+      setIsDeleting(false);
+    }
   }
 
   return (
@@ -46,7 +59,10 @@ export default function BookmarkDeleteButton({
       {isOpen && (
         <DeleteBookmarkModal
           bookmarkTitle={bookmark.title}
-          onClose={() => setIsOpen(false)}
+          isDeleting={isDeleting}
+          onClose={() => {
+            if (!isDeleting) setIsOpen(false);
+          }}
           onConfirm={handleConfirm}
         />
       )}
