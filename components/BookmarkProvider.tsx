@@ -16,7 +16,7 @@ type BookmarkUpdateInput = {
 type BookmarkContextValue = {
   bookmarks: Bookmark[];
   addBookmark: (input: NewBookmarkInput) => Promise<void>;
-  updateBookmark: (id: string, updates: BookmarkUpdateInput) => void;
+  updateBookmark: (id: string, updates: BookmarkUpdateInput) => Promise<void>;
   removeBookmark: (id: string) => void;
 };
 
@@ -63,23 +63,45 @@ export default function BookmarkProvider({
     updateFolderCount(newBookmark.folderId, 1);
   }
 
-  function updateBookmark(id: string, updates: BookmarkUpdateInput) {
+  async function updateBookmark(id: string, updates: BookmarkUpdateInput) {
     const title = updates.title.trim();
     if (!title) return;
 
+    const description = updates.description.trim();
+
+    const supabase = createClient();
+    const { data, error } = await supabase
+      .from("links")
+      .update({
+        title,
+        description,
+        folder_id: updates.folderId ? Number(updates.folderId) : null,
+      })
+      .eq("id", id)
+      .select("id, url, title, description, thumbnail_url, folder_id")
+      .single();
+
+    if (error || !data) {
+      throw new Error(error?.message ?? "링크를 수정하지 못했습니다.");
+    }
+
     const target = bookmarks.find((bookmark) => bookmark.id === id);
+    const updated: Bookmark = {
+      id: String(data.id),
+      url: data.url,
+      title: data.title ?? "",
+      description: data.description ?? "",
+      folderId: data.folder_id != null ? String(data.folder_id) : "",
+      thumbnail: data.thumbnail_url ?? undefined,
+    };
 
     setBookmarks((current) =>
-      current.map((bookmark) =>
-        bookmark.id === id
-          ? { ...bookmark, ...updates, title, description: updates.description.trim() }
-          : bookmark,
-      ),
+      current.map((bookmark) => (bookmark.id === id ? updated : bookmark)),
     );
 
-    if (target && target.folderId !== updates.folderId) {
+    if (target && target.folderId !== updated.folderId) {
       updateFolderCount(target.folderId, -1);
-      updateFolderCount(updates.folderId, 1);
+      updateFolderCount(updated.folderId, 1);
     }
   }
 

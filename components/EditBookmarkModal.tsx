@@ -12,10 +12,12 @@ type BookmarkUpdateInput = {
 
 export default function EditBookmarkModal({
   bookmark,
+  isSaving = false,
   onClose,
   onSave,
 }: {
   bookmark: Bookmark;
+  isSaving?: boolean;
   onClose: () => void;
   onSave: (updates: BookmarkUpdateInput) => void;
 }) {
@@ -26,6 +28,8 @@ export default function EditBookmarkModal({
 
   function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    // 저장 중에는 추가 제출을 막는다.
+    if (isSaving) return;
     if (!title.trim()) return;
     onSave({ folderId, title, description });
   }
@@ -99,15 +103,17 @@ export default function EditBookmarkModal({
           <button
             type="button"
             onClick={onClose}
-            className="btn-secondary flex h-12 flex-1 items-center justify-center rounded-xl text-[15px] font-bold"
+            disabled={isSaving}
+            className="btn-secondary flex h-12 flex-1 items-center justify-center rounded-xl text-[15px] font-bold disabled:opacity-50"
           >
             취소
           </button>
           <button
             type="submit"
-            className="btn-primary flex h-12 flex-1 items-center justify-center rounded-xl text-[15px] font-bold"
+            disabled={isSaving}
+            className="btn-primary flex h-12 flex-1 items-center justify-center rounded-xl text-[15px] font-bold disabled:opacity-50"
           >
-            저장
+            {isSaving ? "저장 중..." : "저장"}
           </button>
         </div>
       </form>

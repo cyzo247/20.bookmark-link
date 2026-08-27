@@ -17,11 +17,24 @@ export default function BookmarkEditButton({
   bookmark: Bookmark;
 }) {
   const [isOpen, setIsOpen] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
   const { updateBookmark } = useBookmarks();
 
-  function handleSave(updates: BookmarkUpdateInput) {
-    updateBookmark(bookmark.id, updates);
-    setIsOpen(false);
+  async function handleSave(updates: BookmarkUpdateInput) {
+    // 저장이 진행 중이면 중복 클릭을 무시한다.
+    if (isSaving) return;
+
+    setIsSaving(true);
+    try {
+      await updateBookmark(bookmark.id, updates);
+      setIsOpen(false);
+    } catch (error) {
+      alert(
+        error instanceof Error ? error.message : "링크를 수정하지 못했습니다.",
+      );
+    } finally {
+      setIsSaving(false);
+    }
   }
 
   return (
@@ -52,7 +65,10 @@ export default function BookmarkEditButton({
       {isOpen && (
         <EditBookmarkModal
           bookmark={bookmark}
-          onClose={() => setIsOpen(false)}
+          isSaving={isSaving}
+          onClose={() => {
+            if (!isSaving) setIsOpen(false);
+          }}
           onSave={handleSave}
         />
       )}
