@@ -4,7 +4,10 @@ import { type NextRequest, NextResponse } from "next/server";
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
 
-export const createClient = (request: NextRequest) => {
+// 로그인하지 않아도 접근할 수 있는 경로.
+const PUBLIC_ROUTES = ["/login", "/signup"];
+
+export const createClient = async (request: NextRequest) => {
   // Create an unmodified response
   let supabaseResponse = NextResponse.next({
     request: {
@@ -32,6 +35,24 @@ export const createClient = (request: NextRequest) => {
       },
     },
   );
+
+  // createServerClient와 getUser 호출 사이에 다른 로직을 두지 않는다.
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  const { pathname } = request.nextUrl;
+  const isPublicRoute = PUBLIC_ROUTES.some(
+    (route) => pathname === route || pathname.startsWith(`${route}/`),
+  );
+
+  // 로그인하지 않은 사용자가 보호된 경로에 접근하면 로그인 페이지로 보낸다.
+  if (!user && !isPublicRoute) {
+    const redirectUrl = request.nextUrl.clone();
+    redirectUrl.pathname = "/login";
+    redirectUrl.search = "";
+    return NextResponse.redirect(redirectUrl);
+  }
 
   return supabaseResponse
 };

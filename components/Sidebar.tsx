@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import FolderList from "@/components/FolderList";
+import LogoutButton from "@/components/LogoutButton";
 import { useFolders } from "@/components/FolderProvider";
 
 export default function Sidebar() {
@@ -25,6 +26,8 @@ export default function Sidebar() {
       </Link>
 
       <FolderList folders={folders} />
+
+      <LogoutButton />
     </aside>
   );
 }
