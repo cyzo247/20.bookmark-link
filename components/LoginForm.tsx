@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/utils/supabase/client";
@@ -21,14 +22,43 @@ function toKoreanError(message: string) {
   return "로그인에 실패했습니다. 잠시 후 다시 시도해 주세요.";
 }
 
-export default function LoginForm() {
+export default function LoginForm({
+  initialError,
+}: {
+  initialError?: string;
+}) {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [error, setError] = useState("");
+  const [isKakaoSubmitting, setIsKakaoSubmitting] = useState(false);
+  const [error, setError] = useState(
+    initialError === "kakao"
+      ? "카카오 로그인에 실패했습니다. 잠시 후 다시 시도해 주세요."
+      : "",
+  );
 
   const canSubmit = email.trim() !== "" && password !== "" && !isSubmitting;
+
+  async function handleKakaoLogin() {
+    if (isKakaoSubmitting) return;
+
+    setIsKakaoSubmitting(true);
+    setError("");
+
+    const supabase = createClient();
+    const { error: signInError } = await supabase.auth.signInWithOAuth({
+      provider: "kakao",
+      options: {
+        redirectTo: `${window.location.origin}/auth/callback`,
+      },
+    });
+
+    if (signInError) {
+      setError("카카오 로그인에 실패했습니다. 잠시 후 다시 시도해 주세요.");
+      setIsKakaoSubmitting(false);
+    }
+  }
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -97,6 +127,20 @@ export default function LoginForm() {
           className="btn-primary mt-2 flex h-12 items-center justify-center rounded-xl text-[15px] font-bold disabled:cursor-not-allowed disabled:opacity-50"
         >
           {isSubmitting ? "로그인 중..." : "로그인"}
+        </button>
+
+        <button
+          type="button"
+          onClick={handleKakaoLogin}
+          disabled={isKakaoSubmitting}
+          className="flex items-center justify-center disabled:cursor-not-allowed disabled:opacity-50"
+        >
+          <Image
+            src="/kakao_login_medium_wide.png"
+            alt="카카오로 로그인"
+            width={300}
+            height={45}
+          />
         </button>
       </form>
 

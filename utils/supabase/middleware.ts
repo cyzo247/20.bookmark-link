@@ -10,6 +10,7 @@ const PUBLIC_ROUTES = [
   "/signup",
   "/forgot-password",
   "/reset-password",
+  "/auth",
 ];
 
 export const createClient = async (request: NextRequest) => {
