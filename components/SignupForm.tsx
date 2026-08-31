@@ -150,6 +150,12 @@ export default function SignupForm() {
           로그인
         </Link>
       </p>
+
+      <p className="text-center text-xs text-[var(--text-sub)]">
+        <Link href="/privacy" className="hover:underline">
+          개인정보 처리방침
+        </Link>
+      </p>
     </>
   );
 }

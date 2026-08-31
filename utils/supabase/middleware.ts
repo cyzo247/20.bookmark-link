@@ -11,6 +11,7 @@ const PUBLIC_ROUTES = [
   "/forgot-password",
   "/reset-password",
   "/auth",
+  "/privacy",
 ];
 
 export const createClient = async (request: NextRequest) => {

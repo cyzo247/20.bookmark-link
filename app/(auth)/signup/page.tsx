@@ -1,4 +1,10 @@
+import type { Metadata } from "next";
 import SignupForm from "@/components/SignupForm";
+
+export const metadata: Metadata = {
+  title: "회원가입",
+  description: "Bookmark Link 계정을 만들고 링크를 정리해 보세요.",
+};
 
 export default function SignupPage() {
   return (
